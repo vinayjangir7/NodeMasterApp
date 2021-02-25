@@ -1,0 +1,703 @@
+openapi: 3.0.1
+info:
+  title: Pizza Store API
+  version: 1.0.0
+  description: API for a pizza delivery system
+  license:
+    name: Opensource
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /users:
+    get:
+      description: Get User data by specific email id
+      summary: Get user
+      operationId: getUser
+      tags:
+        - Users
+      parameters:
+        - name: email
+          in: query
+          required: true
+          description: Email id of the user
+          schema:
+            type: string
+        - in: header
+          name: token
+          schema:
+            type: string
+            format: string
+          required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissingFieldsError'
+        '403':
+          description: Missing token error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissingTokenError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+    post:
+      description: To create a user
+      summary: Create user
+      operationId: createUser
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequestToCreate'
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          description: Missing token error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissingTokenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      description: To update a user
+      summary: Update user
+      operationId: updateUser
+      tags:
+        - Users
+      parameters:
+        - name: email
+          in: query
+          required: true
+          description: Email id of the user
+          schema:
+            type: string
+        - in: header
+          name: token
+          schema:
+            type: string
+            format: string
+          required: true
+      requestBody:
+        description: User details to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequestToUpdate'
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          description: Missing token error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissingTokenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      description: To delete a user
+      summary: Delete user
+      operationId: deleteUser
+      tags:
+        - Users
+      parameters:
+        - name: email
+          in: query
+          required: true
+          description: Email id of the user
+          schema:
+            type: string
+        - in: header
+          name: token
+          schema:
+            type: string
+            format: string
+          required: true
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          description: Missing token error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissingTokenError'
+        '500':
+          description: Missing token error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CantDeleteError'
+  /tokens:
+    get:
+      description: Get token data by specific email id
+      summary: Get token
+      operationId: getToken
+      tags:
+        - Tokens
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: Id of the token
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '400':
+          description: Missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissingFieldsError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+    post:
+      description: To create a token
+      summary: Create token
+      operationId: createToken
+      tags:
+        - Tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequestToCreate'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: internal processing error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CantCreateError'
+    put:
+      description: To update a token
+      summary: Update token
+      operationId: updateToken
+      tags:
+        - Tokens
+      requestBody:
+        description: User details to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequestToUpdate'
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: Internal processing error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CantUpdateError'
+    delete:
+      description: To delete a token
+      summary: Delete token
+      operationId: deleteToken
+      tags:
+        - Tokens
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: Token id of the user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissingFieldsError'
+        '500':
+          description: Could not delete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CantDeleteError'
+  /cart:
+    get:
+      description: Get shoping cart data by specific email id and cart id
+      summary: Get shopping cart
+      operationId: getCart
+      tags:
+        - Cart
+      parameters:
+        - name: email
+          in: query
+          required: true
+          description: Email id of the user
+          schema:
+            type: string
+        - name: id
+          in: query
+          required: true
+          description: Id of the cart
+          schema:
+            type: string
+        - in: header
+          name: token
+          schema:
+            type: string
+            format: string
+          required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '400':
+          description: Missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissingFieldsError'
+        '403':
+          description: Missing token error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissingTokenError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+    post:
+      description: To create a shopping cart
+      summary: Create shopping cart
+      operationId: createCart
+      tags:
+        - Cart
+      parameters: 
+        - in: header
+          name: token
+          schema:
+            type: string
+            format: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          description: Missing token error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissingTokenError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: Internal processing error 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CantCreateError'
+    put:
+      description: To update a shopping cart
+      summary: Update shopping cart
+      operationId: updateCart
+      tags:
+        - Cart
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: Id of the shopping cart
+          schema:
+            type: string
+        - in: header
+          name: token
+          schema:
+            type: string
+            format: string
+          required: true
+      requestBody:
+        description: Cart details to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartRequest'
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          description: Missing token error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissingTokenError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: Internal processing error 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CantUpdateError'
+    delete:
+      description: To delete a shopping cart
+      summary: Delete shopping cart
+      operationId: deleteCart
+      tags:
+        - Cart
+      parameters:
+        - name: email
+          in: query
+          required: true
+          description: Email id of the user
+          schema:
+            type: string
+        - name: id
+          in: query
+          required: true
+          description: Id of the cart
+          schema:
+            type: string
+        - name: token
+          in: header
+          required: true
+          description: Token of the user
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          description: Missing token error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MissingTokenError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        '500':
+          description: Internal processing error 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CantDeleteError'
+components:
+  responses:
+    BadRequestError:
+      description: Bad request error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/400'
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/500'
+  schemas:
+    User:
+      properties:
+        firstName:
+          type: string
+          description: First name of the user
+          example: John
+        lastName:
+          type: string
+          description: Last name of the user
+          example: Doe
+        address:
+          type: string
+          description: Address of the user
+          example: '512 Anderson Lane Plattsburgh, NY 12901'
+    UserRequestToCreate:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            email:
+              type: string
+              description: Email id of the user
+              example: john.doe@example.com
+            password:
+              type: string
+              description: Password of the user
+              example: '***********'
+    UserRequestToUpdate:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            password:
+              type: string
+              description: Password of the user
+              example: '***********'
+    UserResponse:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            email:
+              type: string
+              description: Email id of the user
+              example: john.doe@example.com
+    Token:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email id of the user for whom the token is created
+          example: John.doe@example.com
+        id:
+          type: string
+          description: Id of the token
+          example: f1f3hfhy789ijkdf45fn
+        expires:
+          type: number
+          description: Token expiry time in miliseconds
+          example: 1589462665794
+    TokenRequestToCreate:
+      properties:
+        email:
+          type: string
+          description: Email id of the user
+          example: john.doe@example.com
+        password:
+          type: string
+          description: Password of the user
+          example: '***********'
+    TokenRequestToUpdate:
+      properties:
+        id:
+          type: string
+          description: Token id
+          example: f1f3hfhy789ijkdf45fn
+        extend:
+          type: boolean
+          description: It decides whether to extend the token expiry or not
+          enum: [true, false]
+    MenuItem:
+      type: object
+      properties:
+        id: 
+          type: string
+          description: Id of the dish
+          example: item1
+        name: 
+          type: string
+          description: Name of the dish
+          example: Pizza
+        price: 
+          type: number
+          description: Price of the dish
+          example: 10
+        description: 
+          type: string
+          description: Description of the dish
+          example: Thin crust pizza with four types of cheese
+    CartItem:
+      type: object
+      properties:
+        menuItem:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/MenuItem'
+        quantity:
+          type: number
+          description: Quantity of the menuItem
+          example: 5
+        total: 
+          type: number
+          description: 'Total = Value of menuItem * quantity'
+          example: 100
+    Cart:
+      type: object
+      properties:
+        id:
+          type: string
+          description: id of the cart
+          example: uhjkio456g4j8d37hj3h
+        cartItems: 
+          type: array
+          items:
+            additionalProperties:
+              $ref: '#/components/schemas/CartItem'
+        cartTotal:
+          type: number
+          description: The value of total cart
+          example: 500
+    CartRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email id of the user
+          example: john.doe@gmail.com
+        dishId:
+          type: string
+          description: Id of the menu item
+          example: ef6t8y9i6t4re6g28hf9
+        quantity:
+          type: number
+          description: Quantity of the menu item
+          example: 5
+    MissingTokenError:
+      type: object
+      properties:
+        Error:
+          type: string
+          description: Error message
+          example: 'Missing required token in header, or token is invalid.'
+    MissingFieldsError:
+      type: object
+      properties:
+        Error:
+          type: string
+          description: Error message
+          example: Missing required fields
+    NotFoundError:
+      type: object
+      properties:
+        Error:
+          type: string
+          description: Error message
+          example: Record not found
+    CantCreateError:
+      type: object
+      properties:
+        Error:
+          type: string
+          description: Error message
+          example: Could not create record
+    CantUpdateError:
+      type: object
+      properties:
+        Error:
+          type: string
+          description: Error message
+          example: Could not update record
+    CantDeleteError:
+      type: object
+      properties:
+        Error:
+          type: string
+          description: Error message
+          example: Could not delete record
+    CantHashPasswordError:
+      type: object
+      properties:
+        Error:
+          type: string
+          description: Error message
+          example: Could not hash the user's password
+    AlreadyExistsError:
+      type: object
+      properties:
+        Error:
+          type: string
+          description: Error message
+          example: Record already exists
+    400:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/MissingFieldsError'
+        - $ref: '#/components/schemas/AlreadyExistsError'
+    500:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/CantCreateError'
+        - $ref: '#/components/schemas/CantUpdateError'
+        - $ref: '#/components/schemas/CantDeleteError'
+        - $ref: '#/components/schemas/CantHashPasswordError'
+      
+    

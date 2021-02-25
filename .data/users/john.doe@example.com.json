@@ -1,0 +1,7 @@
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "hashedPassword": "208a8f63e5f160bd771312d944f099503322d319ad52a9a8c14a9041b30cb802",
+  "address": "5 Anderson Lane Plattsburgh, NY 12901"
+}
